@@ -1,4 +1,4 @@
-package hello;
+package com.kryx07;
 
 public class Greeting {
 

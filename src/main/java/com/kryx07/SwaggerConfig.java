@@ -1,4 +1,4 @@
-package hello;
+package com.kryx07;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
