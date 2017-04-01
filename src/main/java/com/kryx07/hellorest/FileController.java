@@ -1,42 +1,37 @@
 package com.kryx07.hellorest;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import java.io.*;
-import java.net.URI;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicLong;
-import java.util.stream.Collectors;
 
 @RestController
+@RequestMapping(value = "/file")
 public class FileController {
 
-    final private String fileName = "file.txt";
 
-    @RequestMapping(value = "/file", method = RequestMethod.POST, consumes = "application/json")
-    public void postLine(@RequestParam(value = "string", defaultValue = "World") String string) {
-        try (Writer writer = new BufferedWriter(new FileWriter(fileName, true))) {
-            writer.write(string + System.lineSeparator());
-            writer.flush();
-        }  catch (IOException e) {
-            e.printStackTrace();
-        }
+    private final FileProcessor fileProcessor;
+
+    public FileController(@Autowired FileProcessor fileProcessor) {
+        this.fileProcessor = fileProcessor;
     }
 
-
-    @RequestMapping(value = "/file", method = RequestMethod.GET, produces = "application/json")
+    @ResponseStatus(HttpStatus.CREATED)
+    @RequestMapping(method = RequestMethod.POST)
+    public void postLine(@RequestBody String string) {
+        fileProcessor.saveToFile(string);
+    }
+    @RequestMapping(method = RequestMethod.GET, produces = "application/json")
     public List<String> getFileContents() {
-        List<String> lineList = null;
-        try {
-            lineList = Files.readAllLines(Paths.get(fileName)).stream().collect(Collectors.toList());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return lineList;
+        return fileProcessor.readFromFile();
     }
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(method = RequestMethod.DELETE)
+    public ResponseEntity<Object> clearFile() {
+        return fileProcessor.clearFile() ? ResponseEntity.ok().build() : ResponseEntity.noContent().build();
+
+    }
+
 }
