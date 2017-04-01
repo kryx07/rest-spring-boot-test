@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
 import java.util.List;
 
 @RestController
@@ -22,6 +23,7 @@ public class FileController {
     @RequestMapping(method = RequestMethod.POST)
     public void postLine(@RequestBody String string) {
         fileProcessor.saveToFile(string);
+        //return ResponseEntity.created(URI.create(string)).build();
     }
     @RequestMapping(method = RequestMethod.GET, produces = "application/json")
     public List<String> getFileContents() {

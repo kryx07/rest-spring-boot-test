@@ -14,14 +14,16 @@ import java.util.stream.Collectors;
 @Service
 public class FileProcessor {
     final private String fileName = "file.txt";
+    File file = new File(fileName);
 
-
-    public void saveToFile(String string) {
+    public boolean saveToFile(String string) {
         try (Writer writer = new FileWriter(fileName, true)) {
             writer.write(string + System.lineSeparator());
             writer.flush();
+            return true;
         }  catch (IOException e) {
             e.printStackTrace();
+            return false;
         }
     }
 
@@ -37,12 +39,15 @@ public class FileProcessor {
     }
 
     public boolean clearFile() {
-        File file = new File(fileName);
-        if(!file.exists()){
-            return false;
-        } else{
+        return file.exists() ? deleteFile() : false;
+    }
+
+    private boolean deleteFile(){
+        try {
             file.delete();
             return true;
+        } catch (Exception e) {
+            return false;
         }
     }
 }
